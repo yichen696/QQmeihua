@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="color-scheme" content="light">
+  <title>QQ群昵称美化</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{color-scheme:light;-webkit-color-scheme:light}
+    html,body{height:100%;overflow:hidden}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      background:linear-gradient(135deg,#F8B4C8,#A8D8EA);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .card-outer{
+      width:85vw;
+      max-width:340px;
+      background:#ff88cc;
+      border-radius:16px;
+      padding:3px;
+      box-shadow:0 6px 24px rgba(0,0,0,.12);
+    }
+    @media(min-width:600px){
+      .card-outer{
+        width:630px;
+        max-width:none;
+        border-radius:20px;
+        padding:4px;
+      }
+      .card{
+        border-radius:18px;
+        max-height:90vh;
+      }
+      .header{
+        padding:20px 24px 8px;
+        font-size:22px;
+      }
+      .tips{
+        padding:4px 24px 14px;
+        font-size:14px;
+        line-height:1.7;
+      }
+      .scroll{
+        padding:0 24px 18px;
+      }
+      .preview-bar{
+        height:42px;
+        border-radius:21px;
+        margin-bottom:8px;
+      }
+      .slider-row{
+        margin-bottom:4px;
+        padding-bottom:4px;
+      }
+      .slider-label{
+        font-size:16px;
+        padding:6px 4px 2px;
+      }
+      .slider-label .val{
+        min-width:36px;
+        font-size:16px;
+      }
+      .custom-slider{
+        height:40px;
+      }
+      .custom-slider .track{
+        height:6px;
+      }
+      .custom-slider .fill{
+        height:6px;
+      }
+      .custom-slider .thumb{
+        width:26px;
+        height:26px;
+      }
+      .field-label{
+        font-size:16px;
+        padding:14px 4px 6px;
+      }
+      .field-input{
+        padding:12px 16px;
+        border-radius:10px;
+        font-size:16px;
+      }
+      .btn{
+        margin:16px 0 0;
+        padding:14px;
+        border-radius:12px;
+        font-size:18px;
+      }
+    }
+    .card{
+      background:#fff;
+      border-radius:14px;
+      overflow:hidden;
+      display:flex;flex-direction:column;
+      max-height:88vh;
+    }
+    .header{
+      padding:12px 16px 4px;
+      text-align:center;
+      font-size:15px;font-weight:700;color:#333;
+    }
+    .tips{
+      padding:2px 16px 8px;
+      font-size:11px;color:#888;line-height:1.6;
+    }
+    .scroll{flex:1;overflow-y:auto;padding:0 16px 12px;-webkit-overflow-scrolling:touch}
+    
+    .preview-bar{
+      width:100%;
+      height:28px;
+      border-radius:14px;
+      margin:0 0 4px;
+      background:#ff0000;
+    }
+    
+    .slider-row{margin-bottom:0;padding-bottom:0}
+    .slider-label{
+      display:flex;justify-content:space-between;align-items:center;
+      font-size:12px;padding:2px 2px 0;
+    }
+    .slider-label .name{font-weight:600}
+    .slider-label .val{
+      font-variant-numeric:tabular-nums;
+      min-width:26px;text-align:right;font-size:12px;
+      font-weight:700;
+    }
+    .label-red{color:#e00}.label-green{color:#0a0}.label-blue{color:#00e}.label-gray{color:#888}
+    
+    .custom-slider{
+      position:relative;width:100%;height:28px;
+      cursor:pointer;touch-action:none;
+      -webkit-user-select:none;user-select:none;
+    }
+    .custom-slider .track{
+      position:absolute;top:50%;left:0;right:0;
+      height:4px;transform:translateY(-50%);
+      border-radius:2px;background:#e0e0e0;
+      pointer-events:none;
+    }
+    .custom-slider .fill{
+      position:absolute;top:50%;left:0;
+      height:4px;transform:translateY(-50%);
+      border-radius:2px;
+      pointer-events:none;
+    }
+    .custom-slider .thumb{
+      position:absolute;top:50%;
+      width:18px;height:18px;border-radius:50%;
+      transform:translate(-50%,-50%);
+      box-shadow:0 1px 4px rgba(0,0,0,.25);
+      pointer-events:none;
+      touch-action:none;
+    }
+    #sR .fill{background:#ff0000}
+    #sR .thumb{background:#ff0000}
+    #sG .fill{background:#00cc00}
+    #sG .thumb{background:#00cc00}
+    #sB .fill{background:#0000ff}
+    #sB .thumb{background:#0000ff}
+    #sA .fill{background:#888}
+    #sA .thumb{background:#888}
+    
+    .field-label{
+      font-size:12px;color:#444;font-weight:600;
+      padding:7px 2px 3px;
+    }
+    .field-input{
+      width:100%;padding:8px 12px;
+      border:2px solid #e8e8e8;border-radius:8px;
+      font-size:13px;outline:none;
+      transition:border-color .2s;
+      background:#fafafa;
+    }
+    .field-input:focus{border-color:#cc88ff}
+    
+    .btn{
+      margin:10px 0 0;
+      padding:10px;border:none;border-radius:9px;
+      width:100%;
+      font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+      background:linear-gradient(135deg,#cc88ff,#ff88cc);
+      box-shadow:0 3px 10px rgba(200,100,255,.3);
+      transition:transform .1s,box-shadow .15s;
+      -webkit-tap-highlight-color:transparent;
+      text-decoration:none;
+      text-align:center;
+      display:block;
+    }
+    .btn:active{transform:scale(.97);box-shadow:0 2px 6px rgba(200,100,255,.2)}
+    .btn-row{
+      display:flex;gap:8px;margin-top:10px;
+    }
+    .btn-row .btn{margin:0;flex:1}
+    
+    .toast{
+      position:fixed;left:50%;bottom:24px;
+      transform:translateX(-50%) translateY(80px);
+      background:#333;color:#fff;
+      padding:10px 22px;border-radius:22px;
+      font-size:14px;white-space:nowrap;
+      opacity:0;transition:all .3s ease;
+      pointer-events:none;z-index:99;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+
+<body>
+  <div class="card-outer">
+    <div class="card">
+      <div class="header">美化昵称</div>
+      <div class="tips">提示：<br>
+        1. 设置好下方参数，点击"复制美化昵称"，那么昵称就会自动复制到您的剪切板啦UwU~<br>
+        2. 但使用美化昵称时要注意喽：不是在QQ账号昵称里设置美化昵称，而是在各个群里的设置群昵称里使用它哦OwO~<br>
+        （直接粘贴自动复制好的美化昵称即可，但要注意QQ的群昵称长度限制哦XwX~，更多资源☞QQ群:518323228，欢迎进来玩呐，哦对了，对话框底部的两个加入按钮需要用浏览器打开该网页再点击才有效哦）
+      </div>
+      <div class="scroll">
+        <div class="preview-bar" id="preview"></div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span class="name label-red">Red - 红色</span>
+            <span class="val label-red" id="rv">255</span>
+          </div>
+          <div class="custom-slider" id="sR">
+            <div class="track"></div>
+            <div class="fill" id="fR"></div>
+            <div class="thumb" id="tR"></div>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span class="name label-green">Green - 绿色</span>
+            <span class="val label-green" id="gv">0</span>
+          </div>
+          <div class="custom-slider" id="sG">
+            <div class="track"></div>
+            <div class="fill" id="fG"></div>
+            <div class="thumb" id="tG"></div>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span class="name label-blue">Blue - 蓝色</span>
+            <span class="val label-blue" id="bv">0</span>
+          </div>
+          <div class="custom-slider" id="sB">
+            <div class="track"></div>
+            <div class="fill" id="fB"></div>
+            <div class="thumb" id="tB"></div>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-label">
+            <span class="name label-gray">Alpha - 透明度</span>
+            <span class="val label-gray" id="av">255</span>
+          </div>
+          <div class="custom-slider" id="sA">
+            <div class="track"></div>
+            <div class="fill" id="fA"></div>
+            <div class="thumb" id="tA"></div>
+          </div>
+        </div>
+
+        <div class="field-label">设置您的昵称</div>
+        <input class="field-input" id="name" placeholder="例如：洛铭酱" maxlength="20">
+
+        <div class="field-label">设置消息尾巴</div>
+        <input class="field-input" id="trail" placeholder="例如：喵~" maxlength="20">
+
+        <button class="btn" id="btn">复制美化昵称</button>
+        <div class="btn-row">
+          <a class="btn" href="mqqapi://group/join_troop?src_type=internal&version=1&troop_uin=518323228&subsource_id=1030&is_need_jump_aio=1" target="_self">加入QQ群</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var _sValues = [255, 0, 0, 255];
+    var _sFills  = ['fR','fG','fB','fA'];
+    var _sThumbs = ['tR','tG','tB','tA'];
+    var _sVals   = ['rv','gv','bv','av'];
+    var _sEls    = ['sR','sG','sB','sA'];
+    
+    function _updateSliderUI(idx, value) {
+      var pct = (value / 255) * 100;
+      document.getElementById(_sFills[idx]).style.width = pct + '%';
+      document.getElementById(_sThumbs[idx]).style.left = pct + '%';
+      document.getElementById(_sVals[idx]).textContent = value;
+    }
+    
+    function _getValueFromX(el, clientX) {
+      var rect = el.getBoundingClientRect();
+      var relX = clientX - rect.left;
+      var pct = Math.max(0, Math.min(1, relX / rect.width));
+      return Math.round(pct * 255);
+    }
+    
+    function _startDrag(idx, e) {
+      e.preventDefault();
+      var el = document.getElementById(_sEls[idx]);
+      var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      _sValues[idx] = _getValueFromX(el, clientX);
+      _updateSliderUI(idx, _sValues[idx]);
+      _updatePreview();
+    
+      function onMove(ev) {
+        ev.preventDefault();
+        var cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+        _sValues[idx] = _getValueFromX(el, cx);
+        _updateSliderUI(idx, _sValues[idx]);
+        _updatePreview();
+      }
+      function onEnd() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onEnd);
+      document.addEventListener('touchmove', onMove, {passive:false});
+      document.addEventListener('touchend', onEnd);
+    }
+    
+    var _darkModeActive = false;
+    function _updatePreview() {
+      var v = 'rgba(' + _sValues[0] + ',' + _sValues[1] + ',' + _sValues[2] + ',' + _sValues[3]/255 + ')';
+      var el = document.getElementById('preview');
+      if (_darkModeActive) {
+        el.style.setProperty('background-color', v, 'important');
+      } else {
+        el.style.backgroundColor = v;
+      }
+    }
+    
+    function _pad2(n) {
+      var h = n.toString(16);
+      return h.length < 2 ? '0' + h : h;
+    }
+    
+    function _showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._tid);
+      t._tid = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+    }
+    
+    function _fallbackCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:50px;font-size:16px;opacity:0.01;z-index:9999;resize:none;border:none;outline:none;padding:4px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { ta.setSelectionRange(0, text.length); } catch(e){}
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      if (ok) {
+        _showToast('已复制到剪贴板哦uwu~');
+      } else {
+        _showManualCopy(text);
+      }
+    }
+    
+    function _showManualCopy(text) {
+      var old = document.getElementById('manualBox');
+      if (old) old.remove();
+      var box = document.createElement('div');
+      box.id = 'manualBox';
+      box.style.cssText = 'margin-top:12px;padding:12px;background:#f5f5f5;border-radius:8px;font-size:13px;word-break:break-all;color:#333;border:1px dashed #ccc;user-select:all;-webkit-user-select:all';
+      box.textContent = text;
+      document.querySelector('.scroll').appendChild(box);
+      _showToast('复制失败，请长按下方文本手动复制');
+    }
+    
+    function _doCopy() {
+      var nickname = document.getElementById('name').value.trim();
+      var trailStr = document.getElementById('trail').value;
+      if (!nickname) { _showToast('请输入昵称'); return; }
+    
+      var puncMatch = trailStr.match(/[\p{P}\p{S}]+$/u);
+      var puncs = puncMatch ? puncMatch[0] : '';
+      var body = puncs ? trailStr.slice(0, -puncs.length) : trailStr;
+    
+      var reversed = '';
+      for (var i = puncs.length - 1; i >= 0; i--) reversed += puncs[i];
+      var ot = reversed + body;
+    
+      // 颜色值转真实Unicode码点字符（原版Lua中\u{XX}转义后为真实字符）
+      var colorTag = '<&'
+        + String.fromCodePoint(_sValues[3])  // Alpha
+        + String.fromCodePoint(_sValues[0])  // Red
+        + String.fromCodePoint(_sValues[1])  // Green
+        + String.fromCodePoint(_sValues[2])  // Blue
+        + '>';
+    
+      var specialA = String.fromCodePoint(0x1160);  // U+1160 HANGUL JUNGSEONG FILLER
+      var specialB = String.fromCodePoint(0x2067);  // U+2067 RIGHT-TO-LEFT ISOLATE
+      var specialC = String.fromCodePoint(0x202d);  // U+202D LEFT-TO-RIGHT OVERRIDE
+    
+      var out = colorTag + nickname + specialA + specialB + ot + specialB + specialC;
+    
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(out).then(function() {
+          _showToast('已复制到剪贴板');
+        }).catch(function() {
+          _fallbackCopy(out);
+        });
+      } else {
+        _fallbackCopy(out);
+      }
+    }
+    
+    /* ===== 暗色模式强制亮色覆盖 ===== */
+    function _forceLightMode() {
+      _darkModeActive = true;
+      var s = document.createElement('style');
+      s.id = 'darkModeOverride';
+      s.textContent =
+        'html{color-scheme:light!important;background:#A8D8EA!important}' +
+        'body{background:linear-gradient(135deg,#F8B4C8,#A8D8EA)!important}' +
+        '.card-outer{background:#ff88cc!important}' +
+        '.card{background:#fff!important}' +
+        '.field-input{background:#fafafa!important;color:#000!important}' +
+        '.preview-bar{background-color:rgba(255,0,0,1)!important}' +
+        '.slider-track{background:#e0e0e0!important}' +
+        '.tips{color:#888!important}' +
+        '.header{color:#333!important}' +
+        '.field-label{color:#444!important}';
+      document.head.appendChild(s);
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) {
+      _forceLightMode();
+    }
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(e) {
+        if (e.matches) _forceLightMode();
+      });
+    }
+
+    /* ===== 初始化 ===== */
+    for (var i = 0; i < 4; i++) {
+      _updateSliderUI(i, _sValues[i]);
+      (function(idx) {
+        var el = document.getElementById(_sEls[idx]);
+        el.addEventListener('mousedown', function(e) { _startDrag(idx, e); });
+        el.addEventListener('touchstart', function(e) { _startDrag(idx, e); }, {passive:false});
+      })(i);
+    }
+    _updatePreview();
+    document.getElementById('btn').onclick = _doCopy;
+  </script>
+</body>
+
+</html>
